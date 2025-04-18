@@ -1,0 +1,179 @@
+// 이상형 테스트 웹앱 - 슬라이드 형식, 결과 요약 포함
+// 기술 스택: React + TailwindCSS + html2canvas (결과 이미지 저장용)
+
+import React, { useState } from 'react';
+import html2canvas from 'html2canvas';
+
+const questions = [
+  {
+    question: '이상형의 얼굴 분위기는?',
+    options: [
+      { text: '날카롭고 또렷한 인상', code: 'SHRP' },
+      { text: '부드럽고 순한 인상', code: 'SOFT' },
+      { text: '귀엽고 앳된 느낌', code: 'CUTE' },
+      { text: '신비롭고 묘한 분위기', code: 'MYST' },
+    ],
+  },
+  {
+    question: '눈이 가는 헤어스타일은?',
+    options: [
+      { text: '깔끔한 단정한 스타일', code: 'NEAT' },
+      { text: '자연스럽고 부스스한 느낌', code: 'FREE' },
+      { text: '밝은 염색머리나 파격 스타일', code: 'BOLD' },
+      { text: '긴 머리 or 웨이브', code: 'FLOW' },
+    ],
+  },
+  {
+    question: '키와 체형 중에 더 끌리는 건?',
+    options: [
+      { text: '키 큰 모델핏', code: 'TALL' },
+      { text: '아담하고 귀여운 체형', code: 'PETI' },
+      { text: '운동으로 다져진 몸', code: 'FITB' },
+      { text: '체형보다 전체 비율', code: 'PROP' },
+    ],
+  },
+  {
+    question: '말투에서 끌리는 포인트는?',
+    options: [
+      { text: '나긋나긋하고 차분한 말투', code: 'CALM' },
+      { text: '활발하고 밝은 말투', code: 'BRIT' },
+      { text: '유머러스하게 툭툭 던지는 말투', code: 'WITY' },
+      { text: '진중하고 진심 어린 말투', code: 'DEEP' },
+    ],
+  },
+  {
+    question: '성격적으로 가장 중요한 요소는?',
+    options: [
+      { text: '센스 있고 말이 잘 통하는 사람', code: 'CHRM' },
+      { text: '나만 바라보는 다정한 사람', code: 'LOVL' },
+      { text: '자기 일에 열정 있는 사람', code: 'PASS' },
+      { text: '조용하지만 깊이 있는 사람', code: 'INTR' },
+    ],
+  },
+  {
+    question: '패션 스타일에서 가장 끌리는 건?',
+    options: [
+      { text: '미니멀하고 세련된 스타일', code: 'CLAS' },
+      { text: '캐주얼하고 편안한 느낌', code: 'CAZU' },
+      { text: '스트릿 & 트렌디한 패션', code: 'STRT' },
+      { text: '클래식하고 깔끔한 룩', code: 'NEAT' },
+    ],
+  },
+  {
+    question: '취미가 같다면 어떤 게 제일 좋아?',
+    options: [
+      { text: '음악, 영화 같이 감상하기', code: 'ARTY' },
+      { text: '산책, 여행 다니기', code: 'MOVE' },
+      { text: '게임, 유튜브 같이 보기', code: 'CHIL' },
+      { text: '새로운 걸 배우거나 만들기', code: 'MAKR' },
+    ],
+  },
+  {
+    question: '목소리 타입 중 가장 매력적인 건?',
+    options: [
+      { text: '저음의 안정적인 목소리', code: 'DVOX' },
+      { text: '밝고 청량한 목소리', code: 'CLER' },
+      { text: '중저음의 말투가 섹시한 목소리', code: 'SMEX' },
+      { text: '귀엽고 발랄한 느낌', code: 'SWTY' },
+    ],
+  },
+  {
+    question: '집에서 본다면 어떤 행동에 끌릴까?',
+    options: [
+      { text: '요리하는 모습', code: 'COOK' },
+      { text: '편하게 누워있는 모습', code: 'LAZY' },
+      { text: '청소나 정리정돈하는 모습', code: 'TIDY' },
+      { text: '집중해서 뭔가에 몰두하는 모습', code: 'FOCU' },
+    ],
+  },
+  {
+    question: '가장 끌리는 첫인상 포인트는?',
+    options: [
+      { text: '눈빛', code: 'EYES' },
+      { text: '목소리', code: 'VOIC' },
+      { text: '웃는 모습', code: 'SMIL' },
+      { text: '전체적인 분위기', code: 'AURA' },
+    ],
+  },
+];
+
+export default function IdealTypeTest() {
+  const [step, setStep] = useState(0);
+  const [answers, setAnswers] = useState([]);
+  const [summary, setSummary] = useState('');
+
+  const handleAnswer = (code) => {
+    const updatedAnswers = [...answers, code];
+    setAnswers(updatedAnswers);
+    if (step === questions.length - 1) {
+      generateSummary(updatedAnswers);
+    }
+    setStep(step + 1);
+  };
+
+  const generateSummary = (codes) => {
+    const pick = (keyword) => codes.find(c => c === keyword);
+    const parts = [];
+    if (pick('CUTE') || pick('SOFT')) parts.push('귀엽고 부드러운 사람');
+    if (pick('SHRP') || pick('MYST')) parts.push('신비롭고 강렬한 인상');
+    if (pick('CLER') || pick('BRIT') || pick('SMIL')) parts.push('밝고 잘 웃는 스타일');
+    if (pick('LOVL') || pick('CHRM')) parts.push('다정하고 센스 있는 성격');
+    if (pick('LAZY') || pick('CHIL')) parts.push('편하게 같이 쉴 수 있는 사람');
+    if (pick('PASS') || pick('FOCU')) parts.push('자기 일에 집중하는 사람');
+
+    const sentence = `너 ${parts.join(', ')} 좋아하잖아~ 완전 너 취향이지!`;
+    setSummary(sentence);
+  };
+
+  const handleDownload = async () => {
+    const resultDiv = document.getElementById('result');
+    const canvas = await html2canvas(resultDiv);
+    const link = document.createElement('a');
+    link.download = 'ideal-type.png';
+    link.href = canvas.toDataURL();
+    link.click();
+  };
+
+  const shareToSNS = (platform) => {
+    const url = encodeURIComponent(window.location.href);
+    const text = encodeURIComponent(summary);
+    if (platform === 'x') {
+      window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`);
+    } else if (platform === 'insta') {
+      alert('인스타그램은 브라우저 공유를 직접 지원하지 않습니다. 결과 이미지를 저장해서 업로드해주세요!');
+    }
+  };
+
+  const generateAIImage = () => {
+    alert('✨ AI 이상형 이미지 생성 기능은 곧 연결됩니다! 지금은 프로토타입입니다 :)');
+  };
+
+  if (step >= questions.length) {
+    return (
+      <div id="result" className="p-6 text-center space-y-4">
+        <h1 className="text-2xl font-bold">🎯 너의 이상형 요약</h1>
+        <p className="text-lg">{summary}</p>
+        <p className="text-sm text-gray-500">코드: {answers.join(' · ')}</p>
+        <div className="space-x-2 mt-4">
+          <button onClick={handleDownload} className="bg-blue-500 text-white px-4 py-2 rounded">이미지 저장</button>
+          <button onClick={() => shareToSNS('x')} className="bg-black text-white px-4 py-2 rounded">X 공유</button>
+          <button onClick={() => shareToSNS('insta')} className="bg-pink-500 text-white px-4 py-2 rounded">인스타 업로드</button>
+        </div>
+        <button onClick={generateAIImage} className="mt-4 border px-4 py-2 rounded-lg">✨ AI로 이상형 그리기</button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col items-center justify-center h-screen px-6">
+      <div className="text-xl font-semibold mb-6">Q{step + 1}. {questions[step].question}</div>
+      <div className="grid gap-4 w-full max-w-md">
+        {questions[step].options.map((opt, idx) => (
+          <button key={idx} onClick={() => handleAnswer(opt.code)} className="bg-white p-4 rounded-2xl shadow hover:bg-blue-50">
+            {opt.text}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
